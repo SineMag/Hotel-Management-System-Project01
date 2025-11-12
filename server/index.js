@@ -12,9 +12,15 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+const spaRoutes = require('./routes/spaRoutes');
+const gymRoutes = require('./routes/gymRoutes');
+
 app.get('/', (req, res) => {
   res.send('Hotel Management System API is running...');
 });
+
+app.use('/api/spa', spaRoutes);
+app.use('/api/gym', gymRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
