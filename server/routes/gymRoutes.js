@@ -3,6 +3,7 @@ const router = express.Router();
 const GymMembership = require('../models/gymMembershipModel');
 const Trainer = require('../models/trainerModel');
 const GymBooking = require('../models/gymBookingModel');
+const AccessLog = require('../models/accessLogModel');
 
 // Get all gym memberships
 router.get('/memberships', async (req, res) => {
@@ -80,6 +81,32 @@ router.post('/bookings', async (req, res) => {
   try {
     const newBooking = await booking.save();
     res.status(201).json(newBooking);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// --- Access Control Logging ---
+
+// Get all access logs
+router.get('/access-logs', async (req, res) => {
+  try {
+    const logs = await AccessLog.find().populate('member', 'member').sort({ timestamp: -1 });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Create a new access log
+router.post('/access-logs', async (req, res) => {
+  const log = new AccessLog({
+    member: req.body.member,
+  });
+
+  try {
+    const newLog = await log.save();
+    res.status(201).json(newLog);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
