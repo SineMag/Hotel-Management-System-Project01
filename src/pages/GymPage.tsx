@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Container, TextField, Button, List, ListItem, ListItemText, Box, CircularProgress, Alert, Chip, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
-import { getGymMemberships, createGymMembership, GymMembership, getTrainers, createTrainer, Trainer, getGymBookings, createGymBooking, GymBooking } from '../services/gymApiService';
+import { getGymMemberships, createGymMembership, GymMembership, getTrainers, createTrainer, Trainer, getGymBookings, createGymBooking, GymBooking, getAccessLogs, createAccessLog, AccessLog } from '../services/gymApiService';
 
 const GymPage: React.FC = () => {
   const [memberships, setMemberships] = useState<GymMembership[]>([]);
@@ -24,6 +24,9 @@ const GymPage: React.FC = () => {
     startTime: new Date(),
     endTime: new Date(),
   });
+  const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
+  const [selectedMemberForLog, setSelectedMemberForLog] = useState<string>('');
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,14 +37,16 @@ const GymPage: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [membershipsData, trainersData, bookingsData] = await Promise.all([
+      const [membershipsData, trainersData, bookingsData, accessLogsData] = await Promise.all([
         getGymMemberships(),
         getTrainers(),
         getGymBookings(),
+        getAccessLogs(),
       ]);
       setMemberships(membershipsData);
       setTrainers(trainersData);
       setBookings(bookingsData);
+      setAccessLogs(accessLogsData);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch gym data:', err);
@@ -110,6 +115,22 @@ const GymPage: React.FC = () => {
     }
   };
 
+  const handleLogAccess = async () => {
+    if (!selectedMemberForLog) {
+      setError('Please select a member to log access.');
+      return;
+    }
+    try {
+      await createAccessLog({ member: selectedMemberForLog });
+      setSelectedMemberForLog('');
+      fetchData();
+      setError(null);
+    } catch (err) {
+      console.error('Failed to log access:', err);
+      setError('Failed to log access. Please ensure the backend is running.');
+    }
+  };
+
   return (
     <Container>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -117,6 +138,48 @@ const GymPage: React.FC = () => {
       </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+      {/* Log Access Section */}
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h5" component="h2" gutterBottom>
+          Log Member Access
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel>Select Member</InputLabel>
+            <Select
+              value={selectedMemberForLog}
+              label="Select Member"
+              onChange={(e) => setSelectedMemberForLog(e.target.value as string)}
+              required
+            >
+              {memberships.map(m => <MenuItem key={m._id} value={m._id}>{m.member}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Button variant="contained" color="primary" onClick={handleLogAccess} disabled={!selectedMemberForLog}>
+            Log Access
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Recent Access Logs Section */}
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h5" component="h2" gutterBottom>
+          Recent Access Logs
+        </Typography>
+        {loading ? <CircularProgress /> : accessLogs.length === 0 ? <Typography>No access logs yet.</Typography> : (
+          <List>
+            {accessLogs.map((log) => (
+              <ListItem key={log._id} divider>
+                <ListItemText
+                  primary={`Member: ${memberships.find(m => m._id === log.member)?.member || 'N/A'}`}
+                  secondary={`Time: ${new Date(log.timestamp).toLocaleString()}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </Box>
 
       {/* Session Booking Section */}
       <Box sx={{ my: 4 }}>

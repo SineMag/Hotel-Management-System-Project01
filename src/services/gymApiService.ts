@@ -27,6 +27,12 @@ export interface GymBooking {
   endTime: Date;
 }
 
+export interface AccessLog {
+  _id?: string;
+  member: string; // Should be a GymMembership ID
+  timestamp: Date;
+}
+
 // --- Membership Calls ---
 
 export const getGymMemberships = async (): Promise<GymMembership[]> => {
@@ -60,5 +66,17 @@ export const getGymBookings = async (): Promise<GymBooking[]> => {
 
 export const createGymBooking = async (booking: GymBooking): Promise<GymBooking> => {
   const response = await axios.post(`${API_URL}/bookings`, booking);
+  return response.data;
+};
+
+// --- Access Log Calls ---
+
+export const getAccessLogs = async (): Promise<AccessLog[]> => {
+  const response = await axios.get(`${API_URL}/access-logs`);
+  return response.data;
+};
+
+export const createAccessLog = async (log: Omit<AccessLog, 'timestamp' | '_id'>): Promise<AccessLog> => {
+  const response = await axios.post(`${API_URL}/access-logs`, log);
   return response.data;
 };
