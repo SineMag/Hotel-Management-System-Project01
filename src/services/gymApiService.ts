@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/gym';
+const API_URL = 'https://hotel-management-system-project01.onrender.com/api/gym';
 
 // Define interfaces for our data objects
 export interface GymMembership {
