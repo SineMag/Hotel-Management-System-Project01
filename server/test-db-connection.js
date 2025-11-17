@@ -1,20 +1,17 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
+require("dotenv").config({ path: './server/.env' });
+const mongoose = require("mongoose");
 
-const MONGODB_URI = process.env.MONGODB_URI;
+// Enable debug logging
+mongoose.set('debug', true);
 
-if (!MONGODB_URI) {
-  console.error('MONGODB_URI is not defined in your .env file.');
-  process.exit(1);
-}
-
-mongoose.connect(MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB successfully!');
-    mongoose.connection.close(); // Close connection after successful test
+    console.log("MongoDB connected!");
+    process.exit(0);
   })
-  .catch(err => {
-    console.error('MongoDB connection failed:', err.message);
-    console.error('Please check your MONGODB_URI in server/.env and your MongoDB Atlas IP Access List.');
+  .catch((error) => {
+    console.error("MongoDB connection failed:", error.message);
+    console.error(error); // full error object with code, host, etc.
     process.exit(1);
   });
