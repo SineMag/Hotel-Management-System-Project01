@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import SpaPage from './pages/SpaPage';
 import GymPage from './pages/GymPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import './App.css';
 
 const darkTheme = createTheme({
@@ -43,6 +44,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/spa" element={<SpaPage />} />
               <Route path="/gym" element={<GymPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
             </Routes>
           </Container>
           <Footer />

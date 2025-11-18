@@ -39,6 +39,15 @@ export const createSpaService = async (service: SpaService): Promise<SpaService>
   return response.data;
 };
 
+export const deleteSpaService = async (id: string): Promise<void> => {
+  await axios.delete(`${API_URL}/services/${id}`);
+};
+
+export const updateSpaService = async (id: string, service: SpaService): Promise<SpaService> => {
+  const response = await axios.put(`${API_URL}/services/${id}`, service);
+  return response.data;
+};
+
 // --- Therapist Calls ---
 
 export const getTherapists = async (): Promise<Therapist[]> => {
@@ -49,6 +58,10 @@ export const getTherapists = async (): Promise<Therapist[]> => {
 export const createTherapist = async (therapist: Therapist): Promise<Therapist> => {
   const response = await axios.post(`${API_URL}/therapists`, therapist);
   return response.data;
+};
+
+export const deleteTherapist = async (id: string): Promise<void> => {
+  await axios.delete(`${API_URL}/therapists/${id}`);
 };
 
 // --- Booking Calls ---

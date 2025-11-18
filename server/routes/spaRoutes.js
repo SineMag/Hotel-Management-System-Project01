@@ -31,6 +31,32 @@ router.post('/services', async (req, res) => {
   }
 });
 
+// Delete a spa service
+router.delete('/services/:id', getService, async (req, res) => {
+  try {
+    await res.service.deleteOne();
+    res.json({ message: 'Deleted Spa Service' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Middleware to get service object by ID
+async function getService(req, res, next) {
+  let service;
+  try {
+    service = await SpaService.findById(req.params.id);
+    if (service == null) {
+      return res.status(404).json({ message: 'Cannot find service' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.service = service;
+  next();
+}
+
 // Get all therapists
 router.get('/therapists', async (req, res) => {
   try {
@@ -56,6 +82,33 @@ router.post('/therapists', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+// Delete a therapist
+router.delete('/therapists/:id', getTherapist, async (req, res) => {
+  try {
+    await res.therapist.deleteOne();
+    res.json({ message: 'Deleted Therapist' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Middleware to get therapist object by ID
+async function getTherapist(req, res, next) {
+  let therapist;
+  try {
+    therapist = await Therapist.findById(req.params.id);
+    if (therapist == null) {
+      return res.status(404).json({ message: 'Cannot find therapist' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.therapist = therapist;
+  next();
+}
+
 
 // Get all spa bookings
 router.get('/bookings', async (req, res) => {

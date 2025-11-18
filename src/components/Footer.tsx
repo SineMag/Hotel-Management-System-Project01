@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Container, Typography, IconButton, Grid } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import { Box, Container, Typography, IconButton, Grid, Link } from '@mui/material';
 import SpaIcon from '@mui/icons-material/Spa';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -56,7 +57,10 @@ const Footer: React.FC = () => {
           <Typography variant="body2" color="text.secondary" align="center">
             {'© '}
             {new Date().getFullYear()}
-            {' Hotel Management System. All rights reserved.'}
+            {' Hotel Management System. All rights reserved. | '}
+            <Link component={RouterLink} to="/privacy" color="inherit">
+              Privacy Policy
+            </Link>
           </Typography>
         </Box>
       </Container>
