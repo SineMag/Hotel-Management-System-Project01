@@ -45,6 +45,15 @@ export const createGymMembership = async (membership: GymMembership): Promise<Gy
   return response.data;
 };
 
+export const deleteGymMembership = async (id: string): Promise<void> => {
+  await axios.delete(`${API_URL}/memberships/${id}`);
+};
+
+export const updateGymMembership = async (id: string, membership: GymMembership): Promise<GymMembership> => {
+  const response = await axios.put(`${API_URL}/memberships/${id}`, membership);
+  return response.data;
+};
+
 // --- Trainer Calls ---
 
 export const getTrainers = async (): Promise<Trainer[]> => {
@@ -54,6 +63,15 @@ export const getTrainers = async (): Promise<Trainer[]> => {
 
 export const createTrainer = async (trainer: Trainer): Promise<Trainer> => {
   const response = await axios.post(`${API_URL}/trainers`, trainer);
+  return response.data;
+};
+
+export const deleteTrainer = async (id: string): Promise<void> => {
+  await axios.delete(`${API_URL}/trainers/${id}`);
+};
+
+export const updateTrainer = async (id: string, trainer: Trainer): Promise<Trainer> => {
+  const response = await axios.put(`${API_URL}/trainers/${id}`, trainer);
   return response.data;
 };
 

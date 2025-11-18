@@ -70,6 +70,7 @@ const SpaPage: React.FC = () => {
       setEditingService(null);
       fetchData();
     } catch (err) {
+      console.error('Failed to update service:', err);
       setError('Failed to update service.');
     }
   };

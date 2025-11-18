@@ -32,6 +32,54 @@ router.post('/memberships', async (req, res) => {
   }
 });
 
+// Delete a gym membership
+router.delete('/memberships/:id', getMembership, async (req, res) => {
+  try {
+    await res.membership.deleteOne();
+    res.json({ message: 'Deleted Gym Membership' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update a gym membership
+router.put('/memberships/:id', getMembership, async (req, res) => {
+  if (req.body.member != null) {
+    res.membership.member = req.body.member;
+  }
+  if (req.body.membershipType != null) {
+    res.membership.membershipType = req.body.membershipType;
+  }
+  if (req.body.startDate != null) {
+    res.membership.startDate = req.body.startDate;
+  }
+  if (req.body.endDate != null) {
+    res.membership.endDate = req.body.endDate;
+  }
+  try {
+    const updatedMembership = await res.membership.save();
+    res.json(updatedMembership);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Middleware to get membership object by ID
+async function getMembership(req, res, next) {
+  let membership;
+  try {
+    membership = await GymMembership.findById(req.params.id);
+    if (membership == null) {
+      return res.status(404).json({ message: 'Cannot find membership' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.membership = membership;
+  next();
+}
+
 // Get all trainers
 router.get('/trainers', async (req, res) => {
   try {
@@ -57,6 +105,51 @@ router.post('/trainers', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+// Delete a trainer
+router.delete('/trainers/:id', getTrainer, async (req, res) => {
+  try {
+    await res.trainer.deleteOne();
+    res.json({ message: 'Deleted Trainer' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update a trainer
+router.put('/trainers/:id', getTrainer, async (req, res) => {
+  if (req.body.name != null) {
+    res.trainer.name = req.body.name;
+  }
+  if (req.body.specialty != null) {
+    res.trainer.specialty = req.body.specialty;
+  }
+  if (req.body.availability != null) {
+    res.trainer.availability = req.body.availability;
+  }
+  try {
+    const updatedTrainer = await res.trainer.save();
+    res.json(updatedTrainer);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Middleware to get trainer object by ID
+async function getTrainer(req, res, next) {
+  let trainer;
+  try {
+    trainer = await Trainer.findById(req.params.id);
+    if (trainer == null) {
+      return res.status(404).json({ message: 'Cannot find trainer' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.trainer = trainer;
+  next();
+}
 
 // Get all gym bookings
 router.get('/bookings', async (req, res) => {

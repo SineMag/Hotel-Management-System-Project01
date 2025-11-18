@@ -41,6 +41,28 @@ router.delete('/services/:id', getService, async (req, res) => {
   }
 });
 
+// Update a spa service
+router.put('/services/:id', getService, async (req, res) => {
+  if (req.body.name != null) {
+    res.service.name = req.body.name;
+  }
+  if (req.body.description != null) {
+    res.service.description = req.body.description;
+  }
+  if (req.body.price != null) {
+    res.service.price = req.body.price;
+  }
+  if (req.body.duration != null) {
+    res.service.duration = req.body.duration;
+  }
+  try {
+    const updatedService = await res.service.save();
+    res.json(updatedService);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 // Middleware to get service object by ID
 async function getService(req, res, next) {
   let service;
